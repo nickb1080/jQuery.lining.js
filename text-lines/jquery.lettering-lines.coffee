@@ -41,6 +41,8 @@ do (  $ = jQuery  ) ->
         # md5 hash string, it will fail because you're being ridiculous.
         injector( $( this ).children( "br" ).replaceWith( r ).end(), r, "line", "" )
 
+    # This works but is extraordinarily ugly...
+    # and probably highly inefficient.
     textLines : ->
       this.each ->
         injector( $( this ), " ", "word", " " )
@@ -64,8 +66,7 @@ do (  $ = jQuery  ) ->
         words.each (i) ->
           $(this).after(" ")
 
-        # console.log lines
-
+        # need an easy hook to unwrap / rewrap on debounced resize.
 
 
     unletter : ( method ) ->
