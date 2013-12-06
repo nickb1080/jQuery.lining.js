@@ -50,19 +50,31 @@ do (  $ = jQuery  ) ->
         collection = []
         lines = []
         lastY = 0
+        inject = ""
         # for word, i in words
         words.each (i) ->
-          y = $(this).offset().top
+          y = $( this ).offset().top
           if y is lastY or i is 0
             collection.push( i )
-          else
+          if ( y isnt lastY and i isnt 0) or ( i is words.length - 1 )
             lines.push( collection )
             collection = []
           lastY = y
         for line, j in lines
+          console.log "start...................."
           first = line.shift()
           last = line.pop()
-          words.slice( ( if first is 0 then 0 else first-1 ), last+1).wrapAll("<span class='text-line#{j}'>")
+          text = []
+          words.slice( ( if first is 0 then 0 else first-1 ), last + 1 ).contents().each( -> text.push(this.nodeValue) )
+          inject += "<span class='text-line#{j+1}'>#{text.join(' ')} </span>"
+          console.log inject
+        console.log lines
+        console.log inject
+        $(this).empty().append( inject )
+
+
+
+          # words.slice( ( if first is 0 then 0 else first-1 ), last+1).wrapAll("<span class='text-line#{j}'>")
         words.each (i) ->
           $(this).after(" ")
 

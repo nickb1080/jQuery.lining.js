@@ -32,18 +32,20 @@
     },
     textLines: function() {
       return this.each(function() {
-        var collection, first, j, last, lastY, line, lines, words, _i, _len;
+        var collection, first, inject, j, last, lastY, line, lines, text, words, _i, _len;
         injector($(this), " ", "word", " ");
         words = $(this).find("span[class^='word']");
         collection = [];
         lines = [];
         lastY = 0;
+        inject = "";
         words.each(function(i) {
           var y;
           y = $(this).offset().top;
           if (y === lastY || i === 0) {
             collection.push(i);
-          } else {
+          }
+          if ((y !== lastY && i !== 0) || (i === words.length - 1)) {
             lines.push(collection);
             collection = [];
           }
@@ -51,10 +53,19 @@
         });
         for (j = _i = 0, _len = lines.length; _i < _len; j = ++_i) {
           line = lines[j];
+          console.log("start....................");
           first = line.shift();
           last = line.pop();
-          words.slice((first === 0 ? 0 : first - 1), last + 1).wrapAll("<span class='text-line" + j + "'>");
+          text = [];
+          words.slice((first === 0 ? 0 : first - 1), last + 1).contents().each(function() {
+            return text.push(this.nodeValue);
+          });
+          inject += "<span class='text-line" + (j + 1) + "'>" + (text.join(' ')) + " </span>";
+          console.log(inject);
         }
+        console.log(lines);
+        console.log(inject);
+        $(this).empty().append(inject);
         return words.each(function(i) {
           return $(this).after(" ");
         });
