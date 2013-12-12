@@ -1,7 +1,7 @@
 {
-  "name": "letteringjs",
-  "version": "0.6.1",
-  "main": "jquery.lettering.js",
+  "name": "liningjs",
+  "version": "0.0.1",
+  "main": "jquery.lining.js",
   "ignore": [
     "examples",
     "**/.*"

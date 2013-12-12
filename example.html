@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Lettering.js... now supporting text lines</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      
+      * {
+        -webkit-transition: all 1s ease-in-out;
+        -moz-transition: all 1s ease-in-out;
+        -ms-transition: all 1s ease-in-out;
+        -o-transition: all 1s ease-in-out;
+        transition: all 1s ease-in-out;
+      }
+
+      body {
+        font-family: sans-serif;
+        color: #333;
+        background: #f3f3f3;
+        max-width: 100%;
+        overflow-x: hidden;
+        line-height: 1.5;
+      }
+
+      .intro {
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #999;
+      }
+
+      .regular-button {
+        background: transparent;
+        border: 1px solid #999;
+        border-radius: .25rem;
+        font-size: 1rem;
+        color: #666;
+        cursor: pointer;
+        padding: .25rem .5rem;
+        -webkit-transition: color .15s ease, background .15s ease, border .15s ease;
+        -moz-transition: color .15s ease, background .15s ease, border .15s ease;
+        transition: color .15s ease, background .15s ease, border .15s ease;
+      }
+
+      .regular-button:hover {
+        background: #666;
+        border-color: #666;
+        color: white;
+      }
+
+      .main {
+        width: 60%;
+        margin: 0 auto;
+        overflow-x: hidden;
+      }
+
+      .subhead {
+        display: block;
+        color: #999;
+        font-size: .5em;
+        text-transform: uppercase;
+      }
+
+      .text {
+        font-family: Georgia, serif;
+      }
+
+      .text h2, .text h3, .text .author {
+        text-align: center;
+      }
+
+      .author {
+        font-style: italic;
+      }
+      
+      .text {
+        opacity: 0;
+      }
+
+      .text [class^="text-line"] {
+        position: relative;
+        left: 20%;
+      }
+
+      .text [class^="text-line"] {
+        opacity: 0; 
+      }
+ 
+      .lined {
+        opacity: 1;
+      }
+
+      .lined [class^="text-line"] {
+        opacity: 1;
+        left: auto;
+        line-height: 1.5;
+      }
+      
+      .lined [class^="text-line"]:nth-of-type(odd) {
+        background: rgba(255, 0, 0, .2);
+      }
+
+      .lined [class^="text-line"]:nth-of-type(even) {
+        background: rgba(0, 0, 255, .2);
+      }
+    </style>    
+
+  </head>
+
+  <body>
+    <section class='main'>
+
+      <div class="intro">
+        <h1>Lining.js
+          <span class="subhead">Wrap text lines
+        </h1>
+        <p>Based on <a href="">lettering.js</a>, lining.js wraps text lines in spans for easy styling. Check it out, then resize the viewport and hit "Show me" again, to see rewrapped lines with the correct endings. This demo uses LESS parsed at runtime, which is not required for this plugin. It can, however, be a powerful tool for creating dynamic styles based on the number of lines.<p>
+        <button class="regular-button" id="show-me">Show me</button>
+      </div>
+      <div class="text">
+        <p class="lining">To Sherlock Holmes she is always <em>the</em> woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler. All emotions, and that one particularly, were abhorrent to his cold, precise but admirably balanced mind. He was, I take it, the most perfect reasoning and observing machine that the world has seen, but as a lover he would have placed himself in a false position. He never spoke of the softer passions, save with a gibe and a sneer. They were admirable things for the observer — excellent for drawing the veil from men’s motives and actions. But for the trained reasoner to admit such intrusions into his own delicate and finely adjusted temperament was to introduce a distracting factor which might throw a doubt upon all his mental results. Grit in a sensitive instrument, or a crack in one of his own high-power lenses, would not be more disturbing than a strong emotion in a nature such as his. And yet there was but one woman to him, and that woman was the late Irene Adler, of dubious and questionable memory.</p>
+      </div>
+
+    </section>
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/less.js/1.5.0/less.min.js"></script>
+    <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="jquery.lining.js"></script>
+    <script>
+      $(document).ready(function() {
+
+        $("#show-me").on("click", function() {
+          $(".text").removeClass("lined")
+          $(".lining").lining("unline").lining()
+          length = $('.lining').find("[class^='text-line']").length
+
+          // LESS mixin to create sequential transition delays depending on number of lines
+          // Has to be constructed here since number of lines not known in advance.
+          // Based on http://blog.thehippo.de/2012/04/programming/do-a-loop-with-less-css/
+          lessLoop = 
+  ".loop (@index) when (@index > 0) {\
+    .text-line@{index} {\
+      -webkit-transition-delay: @index * .2s - .2s !important  ;\
+      -moz-transition-delay: @index * .2s - .2s !important ;\
+      -ms-transition-delay: @index * .2s - .2s !important ;\
+      -o-transition-delay: @index * .2s - .2s !important ;\
+      transition-delay: @index * .2s - .2s !important ;\
+    }\
+    .loop (@index - 1);\
+  }\
+  .loop (0) {}\
+  .loop (" + length + ");"
+          
+          var parser = new(less.Parser);
+
+          parser.parse(lessLoop, function (err, tree) {
+              if (err) { 
+                return console.error(err) 
+              } else { 
+                $( "<style class='rendered-less'>" ).append( tree.toCSS() ).appendTo("head")
+              }
+          });
+
+          setTimeout(function() {
+            $(".text").addClass("lined")
+          }, 1)
+          
+
+          });
+        });
+    </script>
+  </body>
+</html>
